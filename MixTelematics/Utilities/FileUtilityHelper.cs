@@ -15,7 +15,7 @@ namespace MixTelematics.Utilities
                 {
                     VehiclePosition position = new()
                     {
-                        VehicleId = reader.ReadInt32(),
+                        PositionId = reader.ReadInt32(),
                         VehicleRegistration = ReadNullTerminatedString(reader),
                         Latitude = reader.ReadSingle(),
                         Longitude = reader.ReadSingle(),

@@ -6,16 +6,7 @@ namespace MixTelematics.Services
     {
         public static async Task Execute()
         {
-            Logger.Log("Before we start, please confirm would you like to run the program synchronously or asynchronously ? \n Enter S or A respectively for each choice");
-
-            if (Logger.ReadInput()?.Equals("s", StringComparison.OrdinalIgnoreCase) ?? true)
-            {
-                Run();
-            }
-            else
-            {
-                await RunAsync();
-            }
+            await RunAsync();
         }
         public static async Task RunAsync()
         {

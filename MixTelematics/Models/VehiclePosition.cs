@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MixTelematics.Models
+﻿namespace MixTelematics.Models
 {
     public class VehiclePosition
     {
-        public int VehicleId { get; set; }
+        public int PositionId { get; set; }
         public string VehicleRegistration { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
@@ -16,8 +10,7 @@ namespace MixTelematics.Models
 
         public override string ToString()
         {
-            return 
-            $"Vehicle ID: {VehicleId} \n" +
+            return $"Position ID: {PositionId} \n" +
             $"Registration: {VehicleRegistration} \n" +
             $"Latitude: {Latitude} \n" +
             $"Longitude: {Longitude} \n" +

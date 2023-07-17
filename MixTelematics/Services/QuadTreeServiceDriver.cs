@@ -10,35 +10,37 @@ namespace MixTelematics.Services
 
         public async Task HandleFindClosestPositionsAsync(string pathToFile)
         {
+            var timeTracker = new TimeTracker();
+            timeTracker.Start();
+
             var vehiclePositions = await Task.Run(() => FileUtilityHelper.ReadBinaryDataFile(pathToFile)).ContinueWith(x => 
             {
                 Logger.Log("Executing find nearest vehicles algorithm in Async"); 
                 return x.Result; 
-            }
-            );
-
-            var timeTracker = new TimeTracker();
-            timeTracker.Start();
+            });
 
             QuadTree quadTree = new();
 
             quadTree.BuildTree(vehiclePositions, Constants.MinLongitude, Constants.MinLatitude, Constants.MaxLongitude, Constants.MaxLatitude);
-
-            var tasks = new Task[]
+            var vehiclePositionsResults = new List<VehiclePosition>();
+            var tasks = new Task<VehiclePosition>[]
             {
-               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[0].Latitude, _startingCoordinates[0].Longitude)).ContinueWith(x => Logger.Log(_startingCoordinates[0],x.Result)),
-               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[1].Latitude, _startingCoordinates[1].Longitude)).ContinueWith(x => Logger.Log(_startingCoordinates[1],x.Result)),
-               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[2].Latitude, _startingCoordinates[2].Longitude)).ContinueWith(x => Logger.Log(_startingCoordinates[2],x.Result)),
-               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[3].Latitude, _startingCoordinates[3].Longitude)).ContinueWith(x => Logger.Log(_startingCoordinates[3],x.Result)),
-               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[4].Latitude, _startingCoordinates[4].Longitude)).ContinueWith(x => Logger.Log(_startingCoordinates[4],x.Result)),
-               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[5].Latitude, _startingCoordinates[5].Longitude)).ContinueWith(x => Logger.Log(_startingCoordinates[5],x.Result)),
-               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[6].Latitude, _startingCoordinates[6].Longitude)).ContinueWith(x => Logger.Log(_startingCoordinates[6],x.Result)),
-               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[7].Latitude, _startingCoordinates[7].Longitude)).ContinueWith(x => Logger.Log(_startingCoordinates[7],x.Result)),
-               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[8].Latitude, _startingCoordinates[8].Longitude)).ContinueWith(x => Logger.Log(_startingCoordinates[8],x.Result)),
-               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[9].Latitude, _startingCoordinates[9].Longitude)).ContinueWith(x => Logger.Log(_startingCoordinates[9],x.Result)),
+               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[0].Latitude, _startingCoordinates[0].Longitude)),
+               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[1].Latitude, _startingCoordinates[1].Longitude)),
+               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[2].Latitude, _startingCoordinates[2].Longitude)),
+               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[3].Latitude, _startingCoordinates[3].Longitude)),
+               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[4].Latitude, _startingCoordinates[4].Longitude)),
+               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[5].Latitude, _startingCoordinates[5].Longitude)),
+               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[6].Latitude, _startingCoordinates[6].Longitude)),
+               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[7].Latitude, _startingCoordinates[7].Longitude)),
+               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[8].Latitude, _startingCoordinates[8].Longitude)),
+               Task.Run(() => quadTree.FindNearestPosition(_startingCoordinates[9].Latitude, _startingCoordinates[9].Longitude)),
             };
 
             Task.WaitAll(tasks);
+            
+            var result = string.Join(",", tasks.Select(x => x.Result.PositionId));
+            Logger.Log("Nearest Neighbouring Position Ids: ", result);
 
             timeTracker.End();
 
@@ -46,14 +48,14 @@ namespace MixTelematics.Services
         }
         public void HandleFindClosestPositions(string pathToFile)
         {
+            var timeTracker = new TimeTracker();
+            timeTracker.Start();
+
             Logger.Log("Starting now, reading binary file: ");
 
             var vehiclePositions = FileUtilityHelper.ReadBinaryDataFile(pathToFile);
 
             Logger.Log("Executing find nearest vehicles algorithm in Sync");
-
-            var timeTracker = new TimeTracker();
-            timeTracker.Start();
 
             QuadTree quadTree = new();
 
