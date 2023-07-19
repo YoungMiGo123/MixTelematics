@@ -6,7 +6,7 @@ namespace MixTelematics.Services
     {
         public static async Task Execute()
         {
-            await RunAsync();
+             await Run();
         }
         public static async Task RunAsync()
         {
@@ -14,11 +14,11 @@ namespace MixTelematics.Services
             var path = @"..\..\..\VehiclePositions.dat";
             await quadTreeServiceDriver.HandleFindClosestPositionsAsync(path);
         }
-        public static void Run()
+        public static async Task Run()
         {
             var quadTreeServiceDriver = new QuadTreeServiceDriver();
             var path = @"..\..\..\VehiclePositions.dat";
-            quadTreeServiceDriver.HandleFindClosestPositions(path);
+            await quadTreeServiceDriver.HandleFindClosestPositionsV2(path);
         }
     }
 }

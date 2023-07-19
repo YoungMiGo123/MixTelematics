@@ -18,11 +18,9 @@ namespace MixTelematics.Utilities
         }
         public static bool IsPositionInNode(QuadTreeNode node, VehiclePosition position)
         {
-            var isPositionInNode =
-             position.Latitude >= node.X && position.Latitude <= node.X + node.Width &&
+            var isPosInNode = position.Latitude >= node.X && position.Latitude <= node.X + node.Width &&
                    position.Longitude >= node.Y && position.Longitude <= node.Y + node.Height;
-            return isPositionInNode;
+            return isPosInNode;
         }
-
     }
 }
