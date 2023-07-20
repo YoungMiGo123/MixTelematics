@@ -9,7 +9,7 @@ namespace MixTelematics.Utilities
         {
             List<VehiclePosition> positions = new();
 
-            using (BinaryReader reader = new(File.Open(filePath, FileMode.Open,)))
+            using (BinaryReader reader = new(File.Open(filePath, FileMode.Open)))
             {
                 while (reader.BaseStream.Position != reader.BaseStream.Length)
                 {

@@ -8,7 +8,7 @@
 
         public override string ToString()
         {
-            return $"Position Id : {PositionId}";
+            return $"Initial Position: Latitude = {Latitude}, Longitude = {Longitude}";
         }
     }
 }

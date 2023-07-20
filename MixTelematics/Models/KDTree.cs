@@ -1,18 +1,21 @@
-﻿namespace MixTelematics.Models
+﻿using MixTelematics.Utilities;
+
+namespace MixTelematics.Models
 {
 
-    // KD-Tree implementation
     public class KDTree
     {
         private KDNode root;
 
-        // Construct the KD-Tree from a list of positions
         public KDTree(List<VehiclePosition> positions)
         {
             root = BuildTree(positions.ToArray(), 0);
         }
-
-        // Recursive function to build the KD-Tree
+        public VehiclePosition FindNearestNeighbor(Position target)
+        {
+            KDNode nearestNode = FindNearestNeighbor(root, target, 0);
+            return nearestNode?.VehiclePosition ?? new VehiclePosition();
+        }
         private KDNode BuildTree(VehiclePosition[] positions, int depth)
         {
             if (positions.Length == 0)
@@ -21,7 +24,7 @@
             int axis = depth % 2; // Two dimensions: Latitude and Longitude
 
             int medianIndex = positions.Length / 2;
-            SelectSort(positions, medianIndex, axis); // Use HeapSort to find the median position
+            SelectSort(positions, medianIndex, axis); 
 
 
             var vehiclePosition = positions[medianIndex];
@@ -39,8 +42,6 @@
             return node;
         }
 
-
-        // QuickSelect algorithm to find the k-th element along the specified axis
         private void SelectSort(VehiclePosition[] positions, int k, int axis)
         {
             int left = 0;
@@ -57,8 +58,6 @@
                     right = pivotIndex - 1;
             }
         }
-        // Sort the positions within the current range along the split axis
-   
       
         private int Partition(VehiclePosition[] positions, int left, int right, int axis)
         {
@@ -84,8 +83,6 @@
             else
                 return p1.Longitude.CompareTo(p2.Longitude);
         }
-
-        // Swap two elements in the list
         private void Swap(VehiclePosition[] positions, int i, int j)
         {
             var temp = positions[i];
@@ -93,14 +90,7 @@
             positions[j] = temp;
         }
 
-        // Find the nearest neighbor to a given position
-        public VehiclePosition FindNearestNeighbor(Position target)
-        {
-            KDNode nearestNode = FindNearestNeighbor(root, target, 0);
-            return nearestNode?.VehiclePosition ?? new VehiclePosition();
-        }
 
-        // Recursive function to find the nearest neighbor
         private KDNode FindNearestNeighbor(KDNode node, Position target, int depth)
         {
             if (node == null)
@@ -136,17 +126,17 @@
                 }
             }
 
-            if (bestNode == null || CalculateDistance(target, bestNode.Position) > CalculateDistance(target, node.Position))
+            if (bestNode == null || MathUtilityHelper.CalculateDistance(target, bestNode.Position) > MathUtilityHelper.CalculateDistance(target, node.Position))
             {
                 bestNode = node;
             }
 
             if (axis == 0)
             {
-                if (CalculateDistance(target, bestNode.Position) > Math.Abs(target.Latitude - node.Position.Latitude))
+                if (MathUtilityHelper.CalculateDistance(target, bestNode.Position) > Math.Abs(target.Latitude - node.Position.Latitude))
                 {
                     KDNode tempNode = FindNearestNeighbor(otherNode, target, depth + 1);
-                    if (tempNode != null && (bestNode == null || CalculateDistance(target, bestNode.Position) > CalculateDistance(target, tempNode.Position)))
+                    if (tempNode != null && (bestNode == null || MathUtilityHelper.CalculateDistance(target, bestNode.Position) > MathUtilityHelper.CalculateDistance(target, tempNode.Position)))
                     {
                         bestNode = tempNode;
                     }
@@ -154,10 +144,10 @@
             }
             else
             {
-                if (CalculateDistance(target, bestNode.Position) > Math.Abs(target.Longitude - node.Position.Longitude))
+                if (MathUtilityHelper.CalculateDistance(target, bestNode.Position) > Math.Abs(target.Longitude - node.Position.Longitude))
                 {
                     KDNode tempNode = FindNearestNeighbor(otherNode, target, depth + 1);
-                    if (tempNode != null && (bestNode == null || CalculateDistance(target, bestNode.Position) > CalculateDistance(target, tempNode.Position)))
+                    if (tempNode != null && (bestNode == null || MathUtilityHelper.CalculateDistance(target, bestNode.Position) > MathUtilityHelper.CalculateDistance(target, tempNode.Position)))
                     {
                         bestNode = tempNode;
                     }
@@ -167,54 +157,7 @@
             return bestNode;
         }
 
-        // Calculate the Euclidean distance between two positions
-        private double CalculateDistance(Position p1, Position p2)
-        {
-            double latDiff = p1.Latitude - p2.Latitude;
-            double lonDiff = p1.Longitude - p2.Longitude;
-            return Math.Sqrt(latDiff * latDiff + lonDiff * lonDiff);
-        }
-        private void HeapSort(VehiclePosition[] positions, int k, int axis)
-        {
-            int n = positions.Length;
-
-            // Build the max heap
-            for (int i = n / 2 - 1; i >= 0; i--)
-                Heapify(positions, n, i, axis);
-
-            // Extract the top k elements from the heap
-            for (int i = n - 1; i > n - k - 1; i--)
-            {
-                // Move current root to the end
-                Swap(positions, 0, i);
-
-                // Heapify the reduced heap
-                Heapify(positions, i, 0, axis);
-            }
-        }
-
-        // Heapify a subtree rooted at index i
-        private void Heapify(VehiclePosition[] positions, int n, int i, int axis)
-        {
-            int largest = i; // Initialize the largest as the root
-            int left = 2 * i + 1; // Left child
-            int right = 2 * i + 2; // Right child
-
-            // Check if the left child is larger than the root
-            if (left < n && Compare(positions[left], positions[largest], axis) > 0)
-                largest = left;
-
-            // Check if the right child is larger than the largest so far
-            if (right < n && Compare(positions[right], positions[largest], axis) > 0)
-                largest = right;
-
-            // If the largest is not the root, swap and recursively heapify the affected subtree
-            if (largest != i)
-            {
-                Swap(positions, i, largest);
-                Heapify(positions, n, largest, axis);
-            }
-        }
+     
     }
 
 }
