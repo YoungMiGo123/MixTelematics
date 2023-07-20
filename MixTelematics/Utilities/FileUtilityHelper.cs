@@ -31,16 +31,16 @@ namespace MixTelematics.Utilities
 
         public static string ReadNullTerminatedString(BinaryReader reader)
         {
-            List<byte> bytes = new();
+            StringBuilder stringBuilder = new();
 
-            byte currentByte = reader.ReadByte();
-            while (currentByte != 0)
+            var currentByte = reader.ReadChar();
+            while (currentByte != '\0')
             {
-                bytes.Add(currentByte);
-                currentByte = reader.ReadByte();
+                stringBuilder.Append(currentByte);
+                currentByte = reader.ReadChar();
             }
 
-            return Encoding.ASCII.GetString(bytes.ToArray());
+            return stringBuilder.ToString();
         }
     }
 }

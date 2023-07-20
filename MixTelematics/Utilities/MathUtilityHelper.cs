@@ -16,13 +16,19 @@ namespace MixTelematics.Utilities
             float dy = y2 - y1;
             return (float)Math.Sqrt(dx * dx + dy * dy);
         }
-        public static bool IsPositionInNode(QuadTreeNode node, VehiclePosition position)
+
+        public static double CalculateDistance(Position p1, Position p2)
         {
-            var isPositionInNode =
-             position.Latitude >= node.X && position.Latitude <= node.X + node.Width &&
-                   position.Longitude >= node.Y && position.Longitude <= node.Y + node.Height;
-            return isPositionInNode;
+            double latDiff = p1.Latitude - p2.Latitude;
+            double lonDiff = p1.Longitude - p2.Longitude;
+            return Math.Sqrt(latDiff * latDiff + lonDiff * lonDiff);
         }
 
+        public static bool IsPositionInNode(QuadTreeNode node, VehiclePosition position)
+        {
+            var isPosInNode = position.Latitude >= node.X && position.Latitude <= node.X + node.Width &&
+                   position.Longitude >= node.Y && position.Longitude <= node.Y + node.Height;
+            return isPosInNode;
+        }
     }
 }
