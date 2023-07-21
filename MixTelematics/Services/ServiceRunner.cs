@@ -6,7 +6,7 @@ namespace MixTelematics.Services
     {
         public static async Task Execute()
         {
-             await RunAsync();
+             await Run();
         }
         public static async Task RunAsync()
         {

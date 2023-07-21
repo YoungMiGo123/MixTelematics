@@ -55,7 +55,7 @@ namespace MixTelematics.Services
 
             var vehiclePositions = await Task.Run(() => FileUtilityHelper.ReadBinaryDataFile(pathToFile)).ContinueWith(x =>
             {
-                Logger.Log("Executing find nearest vehicles algorithm in Async");
+                Logger.Log("Executing find nearest vehicles algorithm");
                 return x.Result;
             });
 
@@ -63,22 +63,22 @@ namespace MixTelematics.Services
       
             var tasks = new Task<VehiclePosition>[]
             {
-               Task.Run(() => { Logger.Log(_startingCoordinates[0]); return KDTree.FindNearestNeighbor(_startingCoordinates[0]); }),
-               Task.Run(() => { Logger.Log(_startingCoordinates[1]); return KDTree.FindNearestNeighbor(_startingCoordinates[1]); }),
-               Task.Run(() => { Logger.Log(_startingCoordinates[2]); return KDTree.FindNearestNeighbor(_startingCoordinates[2]); }),
-               Task.Run(() => { Logger.Log(_startingCoordinates[3]); return KDTree.FindNearestNeighbor(_startingCoordinates[3]); }),
-               Task.Run(() => { Logger.Log(_startingCoordinates[4]); return KDTree.FindNearestNeighbor(_startingCoordinates[4]); }),
-               Task.Run(() => { Logger.Log(_startingCoordinates[5]); return KDTree.FindNearestNeighbor(_startingCoordinates[5]); }),
-               Task.Run(() => { Logger.Log(_startingCoordinates[6]); return KDTree.FindNearestNeighbor(_startingCoordinates[6]); }),
-               Task.Run(() => { Logger.Log(_startingCoordinates[7]); return KDTree.FindNearestNeighbor(_startingCoordinates[7]); }),
-               Task.Run(() => { Logger.Log(_startingCoordinates[8]); return KDTree.FindNearestNeighbor(_startingCoordinates[8]); }),
-               Task.Run(() => { Logger.Log(_startingCoordinates[9]); return KDTree.FindNearestNeighbor(_startingCoordinates[9]); }),
+               Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[0]); }),
+               Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[1]); }),
+               Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[2]); }),
+               Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[3]); }),
+               Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[4]); }),
+               Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[5]); }),
+               Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[6]); }),
+               Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[7]); }),
+               Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[8]); }),
+               Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[9]); }),
             };
 
             Task.WaitAll(tasks);
 
-            var result = string.Join(",", tasks.Select(x => x.Result.PositionId));
-            Logger.Log("Nearest Neighbouring Position Ids: ", result);
+            var result = string.Join(",", tasks.Select(x => x.Result.VehicleRegistration));
+            Logger.Log("Nearest Vehicles: ", result);
             timeTracker.End();
 
             Logger.Log($"Total Time taken: {timeTracker.TotalTimeTaken()}\nCompleted Successfully");
