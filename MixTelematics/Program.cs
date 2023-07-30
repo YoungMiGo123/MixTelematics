@@ -1,9 +1,4 @@
-﻿
-using MixTelematics.Services;
-
+﻿using MixTelematics.Services;
 
 await ServiceRunner.Execute();
-
-
-
 

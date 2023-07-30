@@ -1,5 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-using MixTelematics.Utilities;
+﻿using MixTelematics.Utilities;
 
 namespace MixTelematics.Models
 {
