@@ -6,7 +6,13 @@ namespace MixTelematics.Services
     {
         public static async Task Execute()
         {
-             await Run();
+            Logger.Log("Quad Tree V2 Optimized Approach");
+            await RunAsyncV2();
+        }
+        public static async Task RunAsyncV2()
+        {
+            var quadTreeServiceDriver = new TreeServiceDriver();
+            await quadTreeServiceDriver.HandleFindClosestPositionsAsyncV2();
         }
         public static async Task RunAsync()
         {

@@ -7,16 +7,54 @@ namespace MixTelematics.Services
     public class TreeServiceDriver
     {
         List<Position> _startingCoordinates => Constants.GetStartingCoordinates();
+        public async Task HandleFindClosestPositionsAsyncV2()
+        {
+            var timeTracker = new TimeTracker();
+            timeTracker.Start();
 
+            var vehicleCache = new VehiclePositionCacheService();
+            var vehiclePositions = await Task.Run(() => vehicleCache.ReadCachedVehiclePositionsAsync()).ContinueWith(x =>
+            {
+                Logger.Log("Executing find nearest vehicles algorithm in Async QuadTreeOptimized");
+                return x.Result;
+            });
+
+
+            var quadTree = new QuadTreeOptimized(vehiclePositions, Constants.MinLongitude, Constants.MinLatitude, Constants.MaxLongitude, Constants.MaxLatitude);
+
+            var vehiclePositionsResults = new List<VehiclePosition>();
+            var tasks = new Task<VehiclePosition>[]
+            {
+               Task.Run(() => quadTree.FindClosestVehicle(_startingCoordinates[0])),
+               Task.Run(() => quadTree.FindClosestVehicle(_startingCoordinates[1])),
+               Task.Run(() => quadTree.FindClosestVehicle(_startingCoordinates[2])),
+               Task.Run(() => quadTree.FindClosestVehicle(_startingCoordinates[3])),
+               Task.Run(() => quadTree.FindClosestVehicle(_startingCoordinates[4])),
+               Task.Run(() => quadTree.FindClosestVehicle(_startingCoordinates[5])),
+               Task.Run(() => quadTree.FindClosestVehicle(_startingCoordinates[6])),
+               Task.Run(() => quadTree.FindClosestVehicle(_startingCoordinates[7])),
+               Task.Run(() => quadTree.FindClosestVehicle(_startingCoordinates[8])),
+               Task.Run(() => quadTree.FindClosestVehicle(_startingCoordinates[9])),
+            };
+
+            Task.WaitAll(tasks);
+
+            var result = string.Join(",", tasks.Select(x => x.Result.VehicleRegistration));
+            Logger.Log("Nearest Vehicles: ", result);
+
+            timeTracker.End();
+
+            Logger.Log($"Total Time taken: {timeTracker.TotalTimeTaken()}\nCompleted Successfully");
+        }
         public async Task HandleFindClosestPositionsAsync()
         {
             var timeTracker = new TimeTracker();
             timeTracker.Start();
 
             var vehicleCache = new VehiclePositionCacheService();
-            var vehiclePositions = await Task.Run(() => vehicleCache.ReadCachedVehiclePositions()).ContinueWith(x =>
+            var vehiclePositions = await Task.Run(() => vehicleCache.ReadCachedVehiclePositionsAsync()).ContinueWith(x =>
             {
-                Logger.Log("Executing find nearest vehicles algorithm in Async");
+                Logger.Log("Executing find nearest vehicles algorithm in Async QuadTree");
                 return x.Result;
             });
 
@@ -42,7 +80,7 @@ namespace MixTelematics.Services
             Task.WaitAll(tasks);
 
             var result = string.Join(",", tasks.Select(x => x.Result.VehicleRegistration));
-            Logger.Log("Nearest Neighbouring Position Ids: ", result);
+            Logger.Log("Nearest Vehicles: ", result);
 
             timeTracker.End();
 
@@ -55,7 +93,7 @@ namespace MixTelematics.Services
             var timeTracker = new TimeTracker();
             timeTracker.Start();
             var vehicleCache = new VehiclePositionCacheService();
-            var vehiclePositions = await Task.Run(() => vehicleCache.ReadCachedVehiclePositions()).ContinueWith(x =>
+            var vehiclePositions = await Task.Run(() => vehicleCache.ReadCachedVehiclePositionsAsync()).ContinueWith(x =>
             {
                 Logger.Log("Executing find nearest vehicles algorithm in Async");
                 return x.Result;

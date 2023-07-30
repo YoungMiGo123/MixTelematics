@@ -23,7 +23,12 @@ namespace MixTelematics.Utilities
             double lonDiff = p1.Longitude - p2.Longitude;
             return Math.Sqrt(latDiff * latDiff + lonDiff * lonDiff);
         }
-
+        public static double CalculateDistance(Position point, double lat, double lon)
+        {
+            double latDiff = point.Latitude - lat;
+            double lonDiff = point.Longitude - lon;
+            return Math.Sqrt(latDiff * latDiff + lonDiff * lonDiff);
+        }
         public static bool IsPositionInNode(QuadTreeNode node, VehiclePosition position)
         {
             var isPosInNode = position.Latitude >= node.X && position.Latitude <= node.X + node.Width &&

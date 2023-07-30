@@ -8,11 +8,14 @@ namespace MixTelematics.Services
     {
         private const int NumFiles = 40;
         private const string outputDirectory = @"..\..\..\SortedDataInput";
-        public List<VehiclePosition> ReadCachedVehiclePositions()
+        public async Task<List<VehiclePosition>> ReadCachedVehiclePositionsAsync()
         {
             var tasks = new Task<List<VehiclePosition>>[NumFiles];
             int i = 0;
-            foreach(var file in Directory.EnumerateFiles(outputDirectory).OrderBy(x => x))
+
+            await CacheVehiclePositions();
+
+            foreach (var file in Directory.EnumerateFiles(outputDirectory).OrderBy(x => x))
             {
                 tasks[i] = Task.Run(() => ReadCachedVehiclePositions(file));
                 i++;
@@ -23,7 +26,7 @@ namespace MixTelematics.Services
         }
         public async Task CacheVehiclePositions()
         {
-            if (Directory.GetFiles(outputDirectory).Any())
+            if (Directory.EnumerateFiles(outputDirectory).Any())
             {
                 return;
             }
