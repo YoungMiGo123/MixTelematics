@@ -8,16 +8,18 @@ namespace MixTelematics.Services
     {
         List<Position> _startingCoordinates => Constants.GetStartingCoordinates();
 
-        public async Task HandleFindClosestPositionsAsync(string pathToFile)
+        public async Task HandleFindClosestPositionsAsync()
         {
             var timeTracker = new TimeTracker();
             timeTracker.Start();
 
-            var vehiclePositions = await Task.Run(() => FileUtilityHelper.ReadBinaryDataFile(pathToFile)).ContinueWith(x => 
+            var vehicleCache = new VehiclePositionCacheService();
+            var vehiclePositions = await Task.Run(() => vehicleCache.ReadCachedVehiclePositions()).ContinueWith(x =>
             {
-                Logger.Log("Executing find nearest vehicles algorithm in Async"); 
-                return x.Result; 
+                Logger.Log("Executing find nearest vehicles algorithm in Async");
+                return x.Result;
             });
+
 
             QuadTree quadTree = new();
 
@@ -38,29 +40,29 @@ namespace MixTelematics.Services
             };
 
             Task.WaitAll(tasks);
-            
-            var result = string.Join(",", tasks.Select(x => x.Result.PositionId));
+
+            var result = string.Join(",", tasks.Select(x => x.Result.VehicleRegistration));
             Logger.Log("Nearest Neighbouring Position Ids: ", result);
 
             timeTracker.End();
 
             Logger.Log($"Total Time taken: {timeTracker.TotalTimeTaken()}\nCompleted Successfully");
         }
-        public async Task HandleFindClosestPositionsV2(string pathToFile)
+        public async Task HandleFindClosestPositionsV2()
         {
             Logger.Log("Starting now, reading binary file: ");
 
             var timeTracker = new TimeTracker();
             timeTracker.Start();
-
-            var vehiclePositions = await Task.Run(() => FileUtilityHelper.ReadBinaryDataFile(pathToFile)).ContinueWith(x =>
+            var vehicleCache = new VehiclePositionCacheService();
+            var vehiclePositions = await Task.Run(() => vehicleCache.ReadCachedVehiclePositions()).ContinueWith(x =>
             {
-                Logger.Log("Executing find nearest vehicles algorithm");
+                Logger.Log("Executing find nearest vehicles algorithm in Async");
                 return x.Result;
             });
 
             var KDTree = new KDTree(vehiclePositions);
-      
+
             var tasks = new Task<VehiclePosition>[]
             {
                Task.Run(() => { return KDTree.FindNearestNeighbor(_startingCoordinates[0]); }),
